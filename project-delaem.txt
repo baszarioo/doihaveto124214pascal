@@ -1,0 +1,73 @@
+This is my exercise:
+Prepare a program parser in Pascal ( use your own lexer). Input has to be a file witch source code written in Pascal. After the parsing the program should print out on the default output information about a valid/invalid structure of input code, and summary that contains number of program rows, number of used variables, nuber of used instructions {if, while, repeat, etc. } 
+
+Note that analizators (lexer and parser)  have to be written using appropriate resources (lex, flex, yacc, bison), whereas the file with example source code in Pascal language have to be analyzed.
+
+v1: 
+
+%{
+	/* The following directives are to enable tracing and timing of the parser */
+	#include <stdio.h>
+	int main() { yyparse(); }
+	int yylex() 
+	{
+		int c;
+		while ((c = getchar())!= 0)
+		return c;
+		return 0;
+	}
+%}
+
+NUM			[0-9]+
+VAR			[a-zA-Z_]{1}[a-zA-Z_0-9]*
+INSTRUCTION		IF|THEN|ELSE|WHILE|DO|REPEAT|UNTIL
+WS			[ \t\n]+
+
+%%
+
+{NUM}												{printf("NUM - %s\n", yytext);}
+{VAR}												{printf("VAR - %s\n", yytext);}
+{INSTRUCTION}										{printf("INSTRUCTION - %s\n", yytext);}
+{WS}												{/* Ignore whitespace */}
+.													{printf("UNKNOWN - %s\n", yytext);}
+
+%%
+
+int yywrap(){ return 1; }
+
+v1: parser
+Below is an example parser written in Bison (version 3.5.2) that meets the requirements prescribed in the question:
+
+%{
+	#include <stdio.h>
+	int num_program_rows = 0;
+	int num_variables = 0;
+	int num_instructions = 0;
+%}
+
+%token NUM VAR INSTRUCTION
+
+%%
+
+program:																{printf("Program valid\n"); printf("Total number of program rows: %d\n", num_program_rows); printf("Total number of variables: %d\n", num_variables); printf("Total number of instructions: %d\n", num_instructions);}
+		| program line													{num_program_rows++; printf("Line valid\n");}
+		;
+
+line:																	{printf("No instruction found\n");}
+		| instruction													{num_instructions++; printf("Instruction found\n");}
+		;
+
+instruction:															{printf("No variables found\n");}
+			| instruction VAR											{num_variables++; printf("Variable found\n");}
+			;
+
+%%
+
+int main(void) {
+	return yyparse();
+}
+
+int yyerror(char *s) {
+	fprintf(stderr, "Error: %s\n", s);
+	return 0;
+}

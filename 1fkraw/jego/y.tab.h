@@ -1,0 +1,9 @@
+#define PROG 257
+#define OTW 258
+#define ZAM 259
+#define KOM 260
+#define WAR 261
+#define PET 262
+#define REP 263
+#define UN 264
+#define WYP 265

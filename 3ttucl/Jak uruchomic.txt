@@ -1,0 +1,15 @@
+1. Pliki: lekser.l parser.y oraz test.pas wgrac na maszyne LTS do jednego folderu
+2. Wykonac nastepujace polecenia:
+	lex lekser.l
+	yacc -d parser.y
+	gcc y.tab.c lex.yy.c -lfl
+3. Aby wywolac program uzywamy polecenia:
+	./a.out
+	Po rozpoczeciu programu mozemy wpisywac kod pascala. Program zakonczy dzialanie gdy 
+	wczyta end. lub skladnia bedzie nie poprawna.
+
+3a. Aby wczytac programy z pliku nalezy uruchomic program poleceniem:
+	./a.out < test.pas
+
+
+*Program byl testowany na zalaczonym pliku
