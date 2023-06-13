@@ -22,7 +22,7 @@ calosc		:
 wiersz 		: '\n' 
 			| wyrazenie '\n' { skroc($1);
 							   printf("%d | %d\n", $1[0], $1[1]); ++i; }
-			| BLAD { return 1; }
+	g		| BLAD { return 1; }
 	
 wyrazenie 	: wyrazenie DODAJ skladnik { $$ = dodaj($1, $3); }
 			| wyrazenie ODEJMIJ skladnik { $$ = odejmij($1, $3); }

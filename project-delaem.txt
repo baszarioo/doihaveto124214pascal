@@ -71,3 +71,27 @@ int yyerror(char *s) {
 	fprintf(stderr, "Error: %s\n", s);
 	return 0;
 }
+
+////////////////////////////////////////////////////////////////pato//////////////
+lekser:
+%{
+	deklaracje uzytkownika
+%}
+	definicje wyrazen regularnych
+%%
+	reguly dopasowania
+%%
+	definicje funkcji i procedur
+
+parser:
+%{
+	deklaracje uzytkownika
+%}
+%	lista tokenow
+%	deklaracje YACC'a
+%%
+	reguly przetwarzania (gramatyka)
+%%
+	definicje funkcjii i procedur
+
+najlepsze: hedi/mszczep/3ttucl/dorendi(3)/fkraw(1)
