@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "y.tab.h"
+#include "parser.tab.h"
 %}
 
 digit [0-9]

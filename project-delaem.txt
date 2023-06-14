@@ -3,95 +3,103 @@ Prepare a program parser in Pascal ( use your own lexer). Input has to be a file
 
 Note that analizators (lexer and parser)  have to be written using appropriate resources (lex, flex, yacc, bison), whereas the file with example source code in Pascal language have to be analyzed.
 
-v1: 
 
+// lekser //:
 %{
-	/* The following directives are to enable tracing and timing of the parser */
+	#include "parser.tab.h"
 	#include <stdio.h>
-	int main() { yyparse(); }
-	int yylex() 
-	{
-		int c;
-		while ((c = getchar())!= 0)
-		return c;
-		return 0;
-	}
+	#include <stdlib.h>
+	int yywrap();
 %}
 
-NUM			[0-9]+
-VAR			[a-zA-Z_]{1}[a-zA-Z_0-9]*
-INSTRUCTION		IF|THEN|ELSE|WHILE|DO|REPEAT|UNTIL
-WS			[ \t\n]+
+COMMENT \{[^\}]*\}|\(\*[^(\*\))]*\*\)
+STRING \'([^\'])*\'
+PROGRAM ^program 
+WHITESPACE [ \t]+
+WRITE (writeln\(.*\);)|(write\(.*\);)
+ROW [\n]
+digit [0-9]
+unsignedInteger {digit}+
+i {unsignedInteger}
+UNTIL [Tt][uU][Tt][Ee][iI][lL].*|{i}|{STRING};
 
 %%
 
-{NUM}												{printf("NUM - %s\n", yytext);}
-{VAR}												{printf("VAR - %s\n", yytext);}
-{INSTRUCTION}										{printf("INSTRUCTION - %s\n", yytext);}
-{WS}												{/* Ignore whitespace */}
-.													{printf("UNKNOWN - %s\n", yytext);}
+{COMMENT} { return KOM; }
+{ROW} { return ROW; }
+{STRING} { return STR; }
+{WHITESPACE} {}
+{UNTIL} { return UN; }
+{PROGRAM} { return PROGRAM; }
+"end"  { return END; }
+"begin" { return BGN; }
+"if" { return IF; }
+"for" { return FOR; }
+"while" { return WHILE; }
+"repeat" { return REPEAT; }
+"do" { return DO; }
+"else" { return ELSE; }
+. {}
 
 %%
 
-int yywrap(){ return 1; }
 
-v1: parser
-Below is an example parser written in Bison (version 3.5.2) that meets the requirements prescribed in the question:
+
+//////////////////////////////////////////////////////////////////////////////////////////PARSER
 
 %{
-	#include <stdio.h>
-	int num_program_rows = 0;
-	int num_variables = 0;
-	int num_instructions = 0;
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+
+int var=0;
+int wiersze=0;
+int ify=0;
+int fory=0;
+int komy=0;
+int ripity=0;
+int rozp=0;
+int whaile=0;
+
+int yyerror();
 %}
 
-%token NUM VAR INSTRUCTION
+%token KOM UN STR ROW
+%token IF FOR WHILE REP ELSE DO END BGN
+
+%% 
+main {return 0;};
+
+program: PROGRAM content END content
+	;
+content :
+	| content BGN content END
+	| content ROW { wiersze++; }
+	| content KOM { komy++; }
+	| content REP content UN { ripity++; }
+	| content WHILE { whaile++; }
+	| content IF { ify++; }
+	| content FOR { fory++; }
+	;
 
 %%
 
-program:																{printf("Program valid\n"); printf("Total number of program rows: %d\n", num_program_rows); printf("Total number of variables: %d\n", num_variables); printf("Total number of instructions: %d\n", num_instructions);}
-		| program line													{num_program_rows++; printf("Line valid\n");}
-		;
+int main(){
+	printf("\n");
+	printf("\skanowanie");
+	yyparse();
+	yylval=1;
+	printf("Przeczytano %d wierszow\n",wiersze);
+	printf("Przeczytano %d if-ow\n",ify);
+	printf("Przeczytano %d for-ow\n",fory);
+	printf("Przeczytano %d while-ow\n",whaile};
+	printf("Przeczytano %d repeat-ow\n",ripity);
+	printf("Przeczytano %d komentarzy\n\n",count_comm);
+	printf("Przeczytano %d wszystkich petli\n",ripity + fory+ whaile);
 
-line:																	{printf("No instruction found\n");}
-		| instruction													{num_instructions++; printf("Instruction found\n");}
-		;
-
-instruction:															{printf("No variables found\n");}
-			| instruction VAR											{num_variables++; printf("Variable found\n");}
-			;
-
-%%
-
-int main(void) {
-	return yyparse();
-}
-
-int yyerror(char *s) {
-	fprintf(stderr, "Error: %s\n", s);
 	return 0;
 }
-
-////////////////////////////////////////////////////////////////pato//////////////
-lekser:
-%{
-	deklaracje uzytkownika
-%}
-	definicje wyrazen regularnych
-%%
-	reguly dopasowania
-%%
-	definicje funkcji i procedur
-
-parser:
-%{
-	deklaracje uzytkownika
-%}
-%	lista tokenow
-%	deklaracje YACC'a
-%%
-	reguly przetwarzania (gramatyka)
-%%
-	definicje funkcjii i procedur
-
-najlepsze: hedi/mszczep/3ttucl/dorendi(3)/fkraw(1)
+int yyerror(){
+	printf("BLAD: %s = %d\n", wiersze=yylval);
+}

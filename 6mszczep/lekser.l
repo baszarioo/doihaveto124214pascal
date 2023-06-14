@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "parser.tab.h"
-
+g
 int cnt=0;
 
 int yywrap();

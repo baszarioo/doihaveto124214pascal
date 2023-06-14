@@ -227,7 +227,6 @@ struct yy_buffer_state
 	int yy_fill_buffer;
 
 	int yy_buffer_status;
-
 #define YY_BUFFER_NEW 0
 #define YY_BUFFER_NORMAL 1
 	/* When an EOF's been seen but there's still some text to process
